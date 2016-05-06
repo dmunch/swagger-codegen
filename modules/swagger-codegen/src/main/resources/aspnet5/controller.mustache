@@ -15,9 +15,9 @@ namespace {{packageName}}.Controllers
 { {{#operations}}
     /// <summary>
     /// {{description}}
-    /// </summary>{{#description}}{{#basePath}}
-    [Route("{{basePath}}")]
-    {{/basePath}}[Description("{{description}}")]{{/description}}
+    /// </summary>
+	{{#description}}[Description("{{description}}")]{{/description}}
+	{{#basePathWithoutHost}}[Route("{{basePathWithoutHost}}")]{{/basePathWithoutHost}}
     public abstract class {{classname}}AbstractController : Controller
     { {{#operation}}
 
@@ -28,7 +28,12 @@ namespace {{packageName}}.Controllers
         /// <param name="{{paramName}}">{{description}}</param>{{/allParams}}{{#responses}}
         /// <response code="{{code}}">{{message}}</response>{{/responses}}
         [{{httpMethod}}]
-        [Route("{{path}}")]
+		{{#basePathWithoutHost}}
+		[Route("{{basePathWithoutHost}}{{path}}")]
+		{{/basePathWithoutHost}}
+		{{^basePathWithoutHost}}
+		[Route("{{path}}")]
+		{{/basePathWithoutHost}}        
         [SwaggerOperation("{{operationId}}")]{{#returnType}}
         [SwaggerResponse(200, type: typeof({{&returnType}}))]{{/returnType}}
         public abstract {{#returnType}}Task<IActionResult>{{/returnType}}{{^returnType}}Task{{/returnType}} {{operationId}}({{#allParams}}{{>pathParam}}{{>queryParam}}{{>bodyParam}}{{>formParam}}{{>headerParam}}{{#hasMore}}, {{/hasMore}}{{/allParams}});
