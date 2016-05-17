@@ -8,8 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.PlatformAbstractions;
 using Newtonsoft.Json.Serialization;
-using Swashbuckle.SwaggerGen;
-using Swashbuckle.SwaggerGen.XmlComments;
 
 namespace {{packageName}}
 {
@@ -35,13 +33,6 @@ namespace {{packageName}}
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string xmlComments = string.Format(@"{0}{4}artifacts{4}{1}{4}{2}{3}{4}{{packageName}}.xml",
-                   GetSolutionBasePath(),
-                   _appEnv.Configuration,
-                   _appEnv.RuntimeFramework.Identifier.ToLower(),
-                   _appEnv.RuntimeFramework.Version.ToString().Replace(".", string.Empty),
-                   Path.DirectorySeparatorChar);
-                   
             // Add framework services.
             services.AddMvc()
                 .AddJsonOptions(
@@ -50,24 +41,6 @@ namespace {{packageName}}
             // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.
             // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
             // services.AddWebApiConventions();
-
-            services.AddSwaggerGen();
-            services.ConfigureSwaggerDocument(options =>
-            {
-                options.SingleApiVersion(new Info
-                {
-                    Version = "v1",
-                    Title = "{{packageName}}",
-                    Description = "{{packageName}} (ASP.NET 5 Web API 2.x)"
-                });
-                
-                options.OperationFilter(new ApplyXmlActionCommentsFixed(xmlComments));
-            });
-
-            services.ConfigureSwaggerSchema(options => { 
-                options.DescribeAllEnumsAsStrings = true; 
-                options.ModelFilter(new ApplyXmlTypeCommentsFixed(xmlComments));
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -83,9 +56,6 @@ namespace {{packageName}}
             app.UseStaticFiles();
 
             app.UseMvc();
-
-            app.UseSwaggerGen();
-            app.UseSwaggerUi();
         }
 
         // Taken from https://github.com/domaindrivendev/Ahoy/blob/master/test/WebSites/Basic/Startup.cs
@@ -104,33 +74,5 @@ namespace {{packageName}}
 
         // Entry point for the application.
         public static void Main(string[] args) => WebApplication.Run<Startup>(args);
-    }
-    
-        
-    //  using Swashbuckle.SwaggerGen.XmlComments;
-    public class ApplyXmlTypeCommentsFixed : ApplyXmlTypeComments
-    {
-        public ApplyXmlTypeCommentsFixed() : base("")
-        {
-            throw new NotImplementedException();
-        }
-
-        public ApplyXmlTypeCommentsFixed(string filePath): base(filePath)
-        {
-
-        }
-    }
-
-    public class ApplyXmlActionCommentsFixed : ApplyXmlActionComments
-    {
-        public ApplyXmlActionCommentsFixed() : base("")
-        {
-            throw new NotImplementedException();
-        }
-
-        public ApplyXmlActionCommentsFixed(string filePath): base(filePath)
-        {
-
-        }
     }
 }

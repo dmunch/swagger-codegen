@@ -8,7 +8,6 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Newtonsoft.Json;
-using Swashbuckle.SwaggerGen.Annotations;
 using {{packageName}}.Models;
 
 namespace {{packageName}}.Controllers
@@ -34,8 +33,6 @@ namespace {{packageName}}.Controllers
 		{{^basePathWithoutHost}}
 		[Route("{{path}}")]
 		{{/basePathWithoutHost}}        
-        [SwaggerOperation("{{operationId}}")]{{#returnType}}
-        [SwaggerResponse(200, type: typeof({{&returnType}}))]{{/returnType}}
         public abstract {{#returnType}}Task<IActionResult>{{/returnType}}{{^returnType}}Task{{/returnType}} {{operationId}}({{#allParams}}{{>pathParam}}{{>queryParam}}{{>bodyParam}}{{>formParam}}{{>headerParam}}{{#hasMore}}, {{/hasMore}}{{/allParams}});
 {{/operation}}
     }
